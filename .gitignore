@@ -6,3 +6,5 @@ yarn-error.log*
 .idea
 target/
 !.mvn/wrapper/maven-wrapper.jar
+# Vue.js project lock files
+vueblog/package-lock.json

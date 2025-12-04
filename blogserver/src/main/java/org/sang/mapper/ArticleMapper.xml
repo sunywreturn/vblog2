@@ -108,4 +108,16 @@
     <select parameterType="long" id="getDataStatistics" resultType="int">
         SELECT pv from pv WHERE uid=#{uid} ORDER by countDate limit 7
     </select>
+
+    <select id="getArticlesByUserId" resultType="org.sang.bean.Article">
+        SELECT * FROM article
+        WHERE uid = #{userId}
+        ORDER BY editTime DESC
+        LIMIT #{start}, #{size}
+    </select>
+
+    <select id="getArticleCountByUserId" resultType="int">
+        SELECT COUNT(*) FROM article
+        WHERE uid = #{userId}
+    </select>
 </mapper>

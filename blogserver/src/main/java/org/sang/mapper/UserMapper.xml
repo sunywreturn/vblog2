@@ -60,4 +60,17 @@
             (#{rid},#{id})
         </foreach>
     </insert>
+
+    <update id="updateUserNickname">
+        UPDATE user SET nickname = #{nickname} WHERE id = #{id}
+    </update>
+
+    <select id="getUserStatistics" resultType="map">
+        SELECT
+            COUNT(CASE WHEN state != 2 THEN 1 END) as articleCount,
+            COALESCE(SUM(CASE WHEN state != 2 THEN pageView ELSE 0 END), 0) as viewCount,
+            COUNT(CASE WHEN state = 0 THEN 1 END) as draftCount
+        FROM article
+        WHERE uid = #{userId}
+    </select>
 </mapper>

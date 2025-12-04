@@ -6,6 +6,7 @@ import org.sang.bean.Role;
 import org.sang.bean.User;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sang on 2017/12/17.
@@ -32,4 +33,8 @@ public interface UserMapper {
     int setUserRoles(@Param("rids") Long[] rids, @Param("id") Long id);
 
     User getUserById(@Param("id") Long id);
+
+    int updateUserNickname(@Param("nickname") String nickname, @Param("id") Long id);
+
+    Map<String, Object> getUserStatistics(@Param("userId") Long userId);
 }

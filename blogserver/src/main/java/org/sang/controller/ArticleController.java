@@ -110,4 +110,36 @@ public class ArticleController {
         map.put("ds", dataStatistics);
         return map;
     }
+
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    public Map<String, Object> getArticlesByUserId(@PathVariable Long userId,
+                                                   @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                   @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            List<Article> articles = articleService.getArticlesByUserId(userId, page, size);
+            int total = articleService.getArticleCountByUserId(userId);
+
+            result.put("list", articles);
+            result.put("total", total);
+        } catch (Exception e) {
+            result.put("list", new ArrayList<>());
+            result.put("total", 0);
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/delete/{aid}", method = RequestMethod.DELETE)
+    public RespBean deleteArticle(@PathVariable Long aid) {
+        try {
+            int result = articleService.deleteArticle(aid);
+            if (result == 1) {
+                return new RespBean("success", "删除成功!");
+            } else {
+                return new RespBean("error", "删除失败!");
+            }
+        } catch (Exception e) {
+            return new RespBean("error", "删除失败!");
+        }
+    }
 }

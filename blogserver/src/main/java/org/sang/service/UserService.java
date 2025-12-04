@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sang on 2017/12/17.
@@ -73,6 +75,14 @@ public class UserService implements UserDetailsService {
         return userMapper.updateUserEmail(email, Util.getCurrentUser().getId());
     }
 
+    public int updateUserEmail(String email, Long userId) {
+        return userMapper.updateUserEmail(email, userId);
+    }
+
+    public int updateUserNickname(String nickname, Long userId) {
+        return userMapper.updateUserNickname(nickname, userId);
+    }
+
     public List<User> getUserByNickname(String nickname) {
         List<User> list = userMapper.getUserByNickname(nickname);
         return list;
@@ -97,5 +107,26 @@ public class UserService implements UserDetailsService {
 
     public User getUserById(Long id) {
         return userMapper.getUserById(id);
+    }
+
+    public Map<String, Object> getUserStatistics(Long userId) {
+        Map<String, Object> statistics = new HashMap<>();
+        try {
+            // 获取文章统计
+            statistics = userMapper.getUserStatistics(userId);
+            // 如果没有数据，返回默认值
+            if (statistics == null) {
+                statistics = new HashMap<>();
+                statistics.put("articleCount", 0);
+                statistics.put("viewCount", 0);
+                statistics.put("draftCount", 0);
+            }
+        } catch (Exception e) {
+            // 出错时返回默认值
+            statistics.put("articleCount", 0);
+            statistics.put("viewCount", 0);
+            statistics.put("draftCount", 0);
+        }
+        return statistics;
     }
 }

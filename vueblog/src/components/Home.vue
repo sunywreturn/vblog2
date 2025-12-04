@@ -73,6 +73,12 @@
           }, function () {
             //取消
           })
+        } else if (command == 'MyHome') {
+          _this.$router.push('/userProfile');
+        } else if (command == 'MyArticle') {
+          _this.$router.push('/myArticles');
+        } else if (command == 'sysMsg') {
+          _this.$message('系统消息功能暂未实现');
         }
       }
     },

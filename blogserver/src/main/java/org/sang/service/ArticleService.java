@@ -142,4 +142,17 @@ public class ArticleService {
     public List<Integer> getDataStatistics() {
         return articleMapper.getDataStatistics(Util.getCurrentUser().getId());
     }
+
+    public List<Article> getArticlesByUserId(Long userId, Integer page, Integer size) {
+        int start = (page - 1) * size;
+        return articleMapper.getArticlesByUserId(userId, start, size);
+    }
+
+    public int getArticleCountByUserId(Long userId) {
+        return articleMapper.getArticleCountByUserId(userId);
+    }
+
+    public int deleteArticle(Long aid) {
+        return articleMapper.deleteArticleById(new Long[]{aid});
+    }
 }

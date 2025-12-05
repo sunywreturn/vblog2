@@ -42,6 +42,10 @@ public class UserService implements UserDetailsService {
         //查询用户的角色信息，并返回存入user中
         List<Role> roles = rolesMapper.getRolesByUid(user.getId());
         user.setRoles(roles);
+        // 为没有头像的用户设置默认头像
+        if (user.getUserface() == null || user.getUserface().trim().isEmpty()) {
+            user.setUserface("/images/avatars/default.png");
+        }
         return user;
     }
 
@@ -85,6 +89,12 @@ public class UserService implements UserDetailsService {
 
     public List<User> getUserByNickname(String nickname) {
         List<User> list = userMapper.getUserByNickname(nickname);
+        // 为没有头像的用户设置默认头像
+        for (User user : list) {
+            if (user.getUserface() == null || user.getUserface().trim().isEmpty()) {
+                user.setUserface("/images/avatars/default.png");
+            }
+        }
         return list;
     }
 
@@ -106,7 +116,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserById(Long id) {
-        return userMapper.getUserById(id);
+        User user = userMapper.getUserById(id);
+        if (user != null && (user.getUserface() == null || user.getUserface().trim().isEmpty())) {
+            user.setUserface("/images/avatars/default.png");
+        }
+        return user;
     }
 
     public Map<String, Object> getUserStatistics(Long userId) {

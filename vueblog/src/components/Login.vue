@@ -1,17 +1,20 @@
 <template>
-  <el-form :rules="rules" class="login-container" label-position="left"
-           label-width="0px" v-loading="loading">
+  <el-form :model="loginForm" :rules="rules" class="login-container" label-position="left"
+           label-width="0px" v-loading="loading" ref="loginForm">
     <h3 class="login_title">系统登录</h3>
-    <el-form-item prop="account">
+    <el-form-item prop="username">
       <el-input type="text" v-model="loginForm.username" auto-complete="off" placeholder="账号"></el-input>
     </el-form-item>
-    <el-form-item prop="checkPass">
+    <el-form-item prop="password">
       <el-input type="password" v-model="loginForm.password" auto-complete="off" placeholder="密码"></el-input>
     </el-form-item>
     <el-checkbox class="login_remember" v-model="checked" label-position="left">记住密码</el-checkbox>
     <el-form-item style="width: 100%">
       <el-button type="primary" @click.native.prevent="submitClick" style="width: 100%">登录</el-button>
     </el-form-item>
+    <div style="text-align: center; margin-top: 15px;">
+      <el-link type="primary" @click="goToRegister">还没有账号？立即注册</el-link>
+    </div>
   </el-form>
 </template>
 <script>
@@ -21,8 +24,8 @@
     data(){
       return {
         rules: {
-          account: [{required: true, message: '请输入用户名', trigger: 'blur'}],
-          checkPass: [{required: true, message: '请输入密码', trigger: 'blur'}]
+          username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+          password: [{required: true, message: '请输入密码', trigger: 'blur'}]
         },
         checked: true,
         loginForm: {
@@ -35,7 +38,9 @@
     methods: {
       submitClick: function () {
         var _this = this;
-        this.loading = true;
+        this.$refs.loginForm.validate((valid) => {
+          if (valid) {
+            _this.loading = true;
         postRequest('/login', {
           username: this.loginForm.username,
           password: this.loginForm.password
@@ -53,10 +58,18 @@
             //失败
             _this.$alert('登录失败!', '失败!');
           }
-        }, resp=> {
-          _this.loading = false;
-          _this.$alert('找不到服务器⊙﹏⊙∥!', '失败!');
+          }, resp=> {
+            _this.loading = false;
+            _this.$alert('找不到服务器⊙﹏⊙∥!', '失败!');
+          });
+          } else {
+            _this.$message.warning('请正确填写登录信息');
+            return false;
+          }
         });
+      },
+      goToRegister: function () {
+        this.$router.push('/register');
       }
     }
   }

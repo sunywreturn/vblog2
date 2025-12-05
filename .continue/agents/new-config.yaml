@@ -1,0 +1,21 @@
+# This is an example configuration file
+# To learn more, see the full config.yaml reference: https://docs.continue.dev/reference
+
+name: Example Config
+version: 1.0.0
+schema: v1
+
+# Define which models can be used
+# https://docs.continue.dev/customization/models
+models:
+  - name: GLM-4.6
+    provider: openai
+    model: glm-4.6
+    apiKey: 7cd453615fc84f7a950ed3df4b8c225b.GE3ywQEXST8DfIPS
+    apiBase: https://open.bigmodel.cn/api/paas/v4/
+    contextLength: 131072
+    completionOptions:
+      maxTokens: 16384
+
+# MCP Servers that Continue can access
+# https://docs.continue.dev/customization/mcp-tools

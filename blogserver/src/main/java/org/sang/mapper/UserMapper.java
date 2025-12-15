@@ -37,4 +37,6 @@ public interface UserMapper {
     int updateUserNickname(@Param("nickname") String nickname, @Param("id") Long id);
 
     Map<String, Object> getUserStatistics(@Param("userId") Long userId);
+
+    int updateUserAvatar(@Param("avatarUrl") String avatarUrl, @Param("id") Long id);
 }

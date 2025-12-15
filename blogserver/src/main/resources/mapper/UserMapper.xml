@@ -7,7 +7,7 @@
         SELECT * FROM user WHERE username=#{username}
     </select>
     <insert id="reg" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user set username=#{username},password=#{password},nickname=#{nickname},email=#{email}
+        INSERT INTO user set username=#{username},password=#{password},nickname=#{nickname}
     </insert>
     <update id="updateUserEmail">
         UPDATE user set email=#{email} WHERE id=#{id}
@@ -66,15 +66,11 @@
     </update>
 
     <select id="getUserStatistics" resultType="map">
-        SELECT
+        SELECT 
             COUNT(CASE WHEN state != 2 THEN 1 END) as articleCount,
             COALESCE(SUM(CASE WHEN state != 2 THEN pageView ELSE 0 END), 0) as viewCount,
             COUNT(CASE WHEN state = 0 THEN 1 END) as draftCount
-        FROM article
+        FROM article 
         WHERE uid = #{userId}
     </select>
-
-    <update id="updateUserAvatar">
-        UPDATE user SET userface = #{avatarUrl} WHERE id = #{id}
-    </update>
 </mapper>

@@ -143,4 +143,8 @@ public class UserService implements UserDetailsService {
         }
         return statistics;
     }
+
+    public int updateUserAvatar(String avatarUrl, Long userId) {
+        return userMapper.updateUserAvatar(avatarUrl, userId);
+    }
 }

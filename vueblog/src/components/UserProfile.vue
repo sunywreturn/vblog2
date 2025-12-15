@@ -8,7 +8,7 @@
           {{ editMode ? '取消编辑' : '编辑资料' }}
         </el-button>
       </div>
-      
+
       <div class="profile-content">
         <!-- 头像 -->
         <div class="avatar-section">
@@ -27,39 +27,39 @@
               <span v-if="!editMode">{{ userInfo.username }}</span>
               <el-input v-else v-model="editForm.username" disabled></el-input>
             </el-form-item>
-            
+
             <el-form-item label="昵称">
               <span v-if="!editMode">{{ userInfo.nickname }}</span>
               <el-input v-else v-model="editForm.nickname"></el-input>
             </el-form-item>
-            
+
             <el-form-item label="邮箱">
               <span v-if="!editMode">{{ userInfo.email }}</span>
               <el-input v-else v-model="editForm.email"></el-input>
             </el-form-item>
-            
+
             <el-form-item label="注册时间">
               <span>{{ userInfo.regTime | formatDateTime }}</span>
             </el-form-item>
-            
+
             <el-form-item label="用户状态">
               <el-tag :type="userInfo.enabled ? 'success' : 'danger'">
                 {{ userInfo.enabled ? '正常' : '禁用' }}
               </el-tag>
             </el-form-item>
-            
+
             <el-form-item label="用户角色">
-              <el-tag 
-                v-for="role in userInfo.roles" 
-                :key="role.id" 
-                size="small" 
-                type="info" 
+              <el-tag
+                v-for="role in userInfo.roles"
+                :key="role.id"
+                size="small"
+                type="info"
                 style="margin-right: 5px;">
                 {{ role.name }}
               </el-tag>
             </el-form-item>
           </el-form>
-          
+
           <div class="action-buttons" v-if="editMode">
             <el-button type="primary" @click="saveProfile" size="small">保存</el-button>
             <el-button @click="editMode = false" size="small">取消</el-button>
@@ -101,8 +101,10 @@
       <el-upload
         class="avatar-uploader"
         action="/upload/avatar"
+        :headers="uploadHeaders"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
+        :on-error="handleAvatarError"
         :before-upload="beforeAvatarUpload">
         <img v-if="newAvatar" :src="newAvatar" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -126,6 +128,8 @@
         editMode: false,
         uploadDialogVisible: false,
         newAvatar: '',
+        uploading: false,
+        uploadHeaders: {},
         userInfo: {
           id: null,
           username: '',
@@ -151,12 +155,13 @@
     mounted() {
       this.loadUserProfile();
       this.loadStatistics();
+      this.setUploadHeaders();
     },
     methods: {
       loadUserProfile() {
         this.loading = true;
         const _this = this;
-        
+
         // 获取当前用户基本信息
         getRequest("/currentUserId").then(resp => {
           if (resp.status == 200) {
@@ -195,7 +200,7 @@
           this.loading = false;
         });
       },
-      
+
       loadStatistics() {
         const _this = this;
         // 获取用户统计数据
@@ -208,11 +213,11 @@
           console.log('统计接口不存在，使用默认值');
         });
       },
-      
+
       saveProfile() {
         const _this = this;
         this.loading = true;
-        
+
         // 更新用户信息
         putRequest("/user/profile", {
           nickname: this.editForm.nickname,
@@ -241,35 +246,65 @@
           this.loading = false;
         });
       },
-      
+
       showUploadDialog() {
         this.uploadDialogVisible = true;
         this.newAvatar = '';
+      },      setUploadHeaders() {
+        // 设置上传请求头，包含认证信息
+        const token = localStorage.getItem('token');
+        if (token) {
+          this.uploadHeaders = {
+            'Authorization': 'Bearer ' + token
+          };
+        }
       },
-      
+
       handleAvatarSuccess(res, file) {
-        this.newAvatar = URL.createObjectURL(file.raw);
+        this.uploading = false;
+        if (res.status === 'success') {
+          this.newAvatar = res.data.url;
+          this.$message.success('头像上传成功');
+        } else {
+          this.$message.error(res.msg || '头像上传失败');
+        }
       },
-      
+
+      handleAvatarError(err, file) {
+        this.uploading = false;
+        this.$message.error('头像上传失败，请重试');
+        console.error('上传错误:', err);
+      },
+
       beforeAvatarUpload(file) {
+        this.uploading = true;
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
         const isLt2M = file.size / 1024 / 1024 < 2;
 
         if (!isJPG) {
           this.$message.error('头像图片只能是 JPG/PNG 格式!');
+          this.uploading = false;
         }
         if (!isLt2M) {
           this.$message.error('头像图片大小不能超过 2MB!');
+          this.uploading = false;
         }
         return isJPG && isLt2M;
       },
-      
+
       confirmAvatar() {
-        // 这里应该调用后端接口保存头像
-        this.$message.success('头像更新成功');
+        if (!this.newAvatar) {
+          this.$message.error('请先上传头像');
+          return;
+        }
+
         this.userInfo.userface = this.newAvatar;
         this.uploadDialogVisible = false;
         this.newAvatar = '';
+        this.$message.success('头像更新成功');
+
+        // 刷新用户信息
+        this.loadUserProfile();
       }
     }
   }
@@ -279,67 +314,67 @@
   .user-profile {
     padding: 20px;
   }
-  
+
   .profile-card {
     max-width: 800px;
     margin: 0 auto;
   }
-  
+
   .profile-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .profile-content {
     display: flex;
     gap: 30px;
   }
-  
+
   .avatar-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
   }
-  
+
   .upload-btn {
     margin-top: 5px;
   }
-  
+
   .info-section {
     flex: 1;
   }
-  
+
   .action-buttons {
     margin-top: 20px;
     text-align: center;
   }
-  
+
   .stat-card {
     text-align: center;
   }
-  
+
   .stat-content {
     padding: 20px;
   }
-  
+
   .stat-number {
     font-size: 28px;
     font-weight: bold;
     color: #409EFF;
     margin-bottom: 10px;
   }
-  
+
   .stat-label {
     color: #666;
     font-size: 14px;
   }
-  
+
   .avatar-uploader {
     text-align: center;
   }
-  
+
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -347,11 +382,11 @@
     position: relative;
     overflow: hidden;
   }
-  
+
   .avatar-uploader .el-upload:hover {
     border-color: #409EFF;
   }
-  
+
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
@@ -360,7 +395,7 @@
     line-height: 178px;
     text-align: center;
   }
-  
+
   .avatar {
     width: 178px;
     height: 178px;

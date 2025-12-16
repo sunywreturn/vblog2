@@ -108,4 +108,8 @@
     <select parameterType="long" id="getDataStatistics" resultType="int">
         SELECT pv from pv WHERE uid=#{uid} ORDER by countDate limit 7
     </select>
+
+    <select id="getArticleCountByUser" parameterType="long" resultType="int">
+        SELECT COUNT(*) FROM article WHERE uid=#{uid} AND state=1
+    </select>
 </mapper>

@@ -110,4 +110,9 @@ public class ArticleController {
         map.put("ds", dataStatistics);
         return map;
     }
+
+    @RequestMapping("/countByUser")
+    public Integer getArticleCountByUser() {
+        return articleService.getArticleCountByUser(Util.getCurrentUser().getId());
+    }
 }

@@ -37,4 +37,6 @@ public interface ArticleMapper {
     List<String> getCategories(Long uid);
 
     List<Integer> getDataStatistics(Long uid);
+
+    Integer getArticleCountByUser(Long uid);
 }

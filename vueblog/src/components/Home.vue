@@ -73,6 +73,12 @@
           }, function () {
             //取消
           })
+        } else if (command == 'MyHome') {
+          this.$router.push('/myHome');
+        } else if (command == 'MyArticle') {
+          this.$router.push('/articleList');
+        } else if (command == 'sysMsg') {
+          this.$message.info('系统消息功能开发中...');
         }
       }
     },

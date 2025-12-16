@@ -98,4 +98,8 @@ public class UserService implements UserDetailsService {
     public User getUserById(Long id) {
         return userMapper.getUserById(id);
     }
+
+    public int updateUserInfo(String nickname, String email, Long id) {
+        return userMapper.updateUserInfo(nickname, email, id);
+    }
 }

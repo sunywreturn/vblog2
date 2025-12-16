@@ -32,4 +32,6 @@ public interface UserMapper {
     int setUserRoles(@Param("rids") Long[] rids, @Param("id") Long id);
 
     User getUserById(@Param("id") Long id);
+
+    int updateUserInfo(@Param("nickname") String nickname, @Param("email") String email, @Param("id") Long id);
 }

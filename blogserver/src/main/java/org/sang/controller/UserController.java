@@ -53,4 +53,17 @@ public class UserController {
         }
         return new RespBean("error", "开启失败!");
     }
+
+    @RequestMapping("/currentUserInfo")
+    public User currentUserInfo() {
+        return userService.getUserById(Util.getCurrentUser().getId());
+    }
+
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.PUT)
+    public RespBean updateUserInfo(String nickname, String email) {
+        if (userService.updateUserInfo(nickname, email, Util.getCurrentUser().getId()) == 1) {
+            return new RespBean("success", "更新成功!");
+        }
+        return new RespBean("error", "更新失败!");
+    }
 }

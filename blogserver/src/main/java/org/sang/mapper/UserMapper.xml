@@ -60,4 +60,7 @@
             (#{rid},#{id})
         </foreach>
     </insert>
+    <update id="updateUserInfo">
+        UPDATE user set nickname=#{nickname}, email=#{email} WHERE id=#{id}
+    </update>
 </mapper>

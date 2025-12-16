@@ -142,4 +142,13 @@ public class ArticleService {
     public List<Integer> getDataStatistics() {
         return articleMapper.getDataStatistics(Util.getCurrentUser().getId());
     }
+
+    /**
+     * 获取用户文章数量
+     * @param uid 用户ID
+     * @return
+     */
+    public Integer getArticleCountByUser(Long uid) {
+        return articleMapper.getArticleCountByUser(uid);
+    }
 }

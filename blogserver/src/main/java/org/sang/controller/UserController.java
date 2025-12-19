@@ -2,6 +2,7 @@ package org.sang.controller;
 
 import org.sang.bean.RespBean;
 import org.sang.service.UserService;
+import org.sang.bean.User;
 import org.sang.utils.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

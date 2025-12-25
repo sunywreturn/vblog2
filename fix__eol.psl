@@ -1,0 +1,55 @@
+# fix_eol.ps1
+
+# 获取当前脚本所在的路径（即项目根目录）
+$rootPath = Get-Location
+
+# 定义要排除的文件夹名称
+$excludeFolders = @("node_modules", ".git")
+
+# 定义要排除的文件扩展名
+$excludeExtensions = @(".png", ".jpg")
+
+Write-Host "开始扫描目录: $rootPath" -ForegroundColor Green
+
+# 递归获取所有文件
+Get-ChildItem -Path $rootPath -Recurse -File | ForEach-Object {
+    $file = $_
+    $filePath = $file.FullName
+    
+    # 1. 检查是否在排除的目录中
+    $isInExcludedFolder = $false
+    foreach ($folder in $excludeFolders) {
+        if ($filePath -match "[\\/]$folder[\\/]") {
+            $isInExcludedFolder = $true
+            break
+        }
+    }
+    if ($isInExcludedFolder) { return } # 跳过此文件
+
+    # 2. 检查是否是排除的扩展名
+    if ($excludeExtensions -contains $file.Extension.ToLower()) {
+        return # 跳过此文件
+    }
+
+    try {
+        # 读取文件内容
+        $content = [System.IO.File]::ReadAllText($filePath)
+
+        # 检查是否包含 CRLF (\r\n)
+        if ($content.Contains("`r`n")) {
+            Write-Host "正在转换: $filePath" -ForegroundColor Cyan
+            
+            # 替换 CRLF 为 LF
+            $newContent = $content.Replace("`r`n", "`n")
+            
+            # 使用 UTF-8 (无 BOM) 编码写回文件
+            $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+            [System.IO.File]::WriteAllText($filePath, $newContent, $utf8NoBom)
+        }
+    }
+    catch {
+        Write-Warning "无法处理文件: $filePath. 错误信息: $_"
+    }
+}
+
+Write-Host "处理完成！" -ForegroundColor Green

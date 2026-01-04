@@ -93,7 +93,7 @@ public class FileUploadController {
                 Map<String, Object> data = new HashMap<>();
                 data.put("url", fileUrl);
                 data.put("message", "头像上传成功");
-                return new RespBean("success", "头像上传成功", data);
+                return new RespBean("success", "头像上传成功");
             } else {
                 return new RespBean("error", "头像上传成功，但更新数据库失败");
             }

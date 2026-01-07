@@ -1,255 +1,233 @@
-# V部落博客系统本地运行文档
+# V部落博客系统 - 本地运行指南
 
 ## 项目概述
 
-V部落是一个基于Vue + SpringBoot开发的多用户博客管理平台，包含前端Vue项目和后端SpringBoot项目。
+V部落是一个多用户博客管理平台，采用前后端分离架构：
+- **后端**: Spring Boot + Spring Security + MyBatis + MySQL
+- **前端**: Vue + ElementUI + axios + vue-router
+
+## 环境要求
+
+### 必需软件
+1. **Java JDK** 1.8 或以上版本
+2. **MySQL** 5.7 或以上版本
+3. **Node.js** 14.x 或以上版本 
+4. **Maven** 3.6 或以上版本（可选，项目自带Maven Wrapper）
+
+### 开发工具（推荐）
+- **后端**: IntelliJ IDEA
+- **前端**: WebStorm 或 VS Code
+- **数据库管理**: MySQL Workbench 或 phpMyAdmin
 
 ## 项目结构
 
 ```
 VBlog/
-├── blogserver/          # SpringBoot后端项目
-├── vueblog/            # Vue前端项目
-├── doc/                # 项目文档
-├── README.md           # 项目说明
-└── run.md             # 本地运行文档（本文件）
+├── blogserver/          # Spring Boot后端项目
+│   ├── src/
+│   ├── pom.xml
+│   └── mvnw, mvnw.cmd   # Maven Wrapper
+├── vueblog/             # Vue前端项目
+│   ├── src/
+│   ├── package.json
+│   └── static/
+└── doc/                 # 项目文档
 ```
 
-## 环境要求
+## 快速启动指南
 
-### 基础环境
-- **操作系统**: Windows 10/11
-- **Java**: JDK 1.8+
-- **Node.js**: 4.0.0+
-- **npm**: 3.0.0+
-- **MySQL**: 5.7+
+### 第一步：克隆项目
 
-### 开发工具（可选）
-- **后端**: IntelliJ IDEA
-- **前端**: WebStorm 或 VSCode
-- **数据库**: MySQL Workbench 或 Navicat
-
-## 运行步骤
-
-### 第一步：准备工作
-
-1. **确保MySQL已安装并启动**
-2. **确保Java 8+已安装**
-3. **确保Node.js和npm已安装**
-
-验证环境：
-```powershell
-# 检查Java版本
-java -version
-
-# 检查Node.js版本
-node -v
-
-# 检查npm版本
-npm -v
+```bash
+git clone https://github.com/lenve/VBlog.git
+cd VBlog
 ```
 
 ### 第二步：数据库配置
 
 1. **创建数据库**
    ```sql
-   CREATE DATABASE vueblog2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE DATABASE vueblog CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
-2. **导入数据库脚本**
-   - 找到 `blogserver/src/main/resources/vueblog.sql` 文件
-   - 在MySQL中执行该脚本，创建表结构和初始数据
+2. **导入数据**
+   - 找到文件：`blogserver/src/main/resources/vueblog.sql`
+   - 在MySQL中执行该SQL文件
 
-3. **验证数据库**
-   ```sql
-   USE vueblog2;
-   SHOW TABLES;
-   ```
-
-### 第三步：后端配置
-
-1. **修改数据库连接配置**
+3. **修改数据库连接配置**
    
-   编辑 `blogserver/src/main/resources/application.properties` 文件：
-
+   编辑文件：`blogserver/src/main/resources/application.properties`
    ```properties
-   spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
-   spring.datasource.url=jdbc:mysql://localhost:3306/vueblog2?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-   spring.datasource.username=root        # 修改为你的MySQL用户名
-   spring.datasource.password=123         # 修改为你的MySQL密码
-   
-   mybatis.config-location=classpath:/mybatis-config.xml
-   server.port=8081
-   logging.level.org.springframework.security=info
+   # 根据你的实际情况修改以下配置
+   spring.datasource.url=jdbc:mysql://localhost:3306/vueblog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+   spring.datasource.username=root
+   spring.datasource.password=你的MySQL密码
    ```
 
-2. **启动后端服务**
-   
-   使用IntelliJ IDEA打开 `blogserver` 项目，找到主启动类并运行，或者使用命令行：
+### 第三步：启动后端服务
 
-   ```powershell
-   cd blogserver
-   mvn spring-boot:run
-   ```
+**方式一：使用IDE运行**
+1. 在IntelliJ IDEA中打开 `blogserver` 项目
+2. 找到主启动类（通常在 `org.sang` 包下）
+3. 右键运行主启动类
 
-3. **验证后端启动**
-   
-   访问 `http://localhost:8081`，应该能看到响应信息。
+**方式二：使用命令行运行**
+```bash
+cd blogserver
 
-### 第四步：前端配置
+# Windows用户
+.\mvnw.cmd spring-boot:run
 
-1. **安装前端依赖**
-   
-   ```powershell
+# Linux/Mac用户  
+./mvnw spring-boot:run
+```
+
+服务启动成功后，访问：http://localhost:8081
+
+出现Spring Boot页面或无错误日志表示后端启动成功。
+
+### 第四步：启动前端服务
+
+1. **安装依赖**
+   ```bash
    cd vueblog
    npm install
    ```
 
-2. **启动前端开发服务器**
-   
-   ```powershell
+   如果安装遇到网络问题，可以使用淘宝镜像：
+   ```bash
+   npm config set registry https://registry.npmmirror.com
+   npm install
+   ```
+
+2. **启动开发服务器**
+   ```bash
    npm run dev
    ```
 
-3. **验证前端启动**
-   
-   访问 `http://localhost:8080`，应该能看到V部落登录页面。
+   前端服务启动后，访问：http://localhost:8080
 
 ### 第五步：访问系统
 
-- **前端开发环境**: http://localhost:8080
-- **后端API服务**: http://localhost:8081
+- **开发模式**: http://localhost:8080
+  - 前端Vue开发服务器 + 后端Spring Boot服务
+  - 适合开发调试，支持热重载
 
-## 项目启动说明
-
-### 开发模式运行
-
-**方式一：分别启动前后端**
-
-1. 启动后端：
-   ```powershell
-   cd blogserver
-   mvn spring-boot:run
-   ```
-
-2. 启动前端：
-   ```powershell
-   cd vueblog
-   npm run dev
-   ```
-
-3. 访问：http://localhost:8080
-
-**方式二：仅启动后端（静态文件方式）**
-
-如果已经构建过前端，可以只启动后端：
-
-1. 启动后端：
-   ```powershell
-   cd blogserver
-   mvn spring-boot:run
-   ```
-
-2. 访问：http://localhost:8081/index.html
+- **生产模式**: http://localhost:8081/index.html  
+  - 仅后端Spring Boot服务
+  - 适合测试验证
 
 ## 生产部署
 
 ### 构建前端项目
 
-```powershell
+```bash
 cd vueblog
 npm run build
 ```
 
-构建完成后，会在 `vueblog/dist` 目录下生成静态文件。
+构建成功后，会在 `vueblog/dist` 目录下生成：
+- `index.html`
+- `static/` 文件夹
 
-### 部署到SpringBoot
+### 部署到Spring Boot
 
-1. 将 `vueblog/dist` 目录下的所有文件复制到 `blogserver/src/main/resources/static/` 目录下
-2. 重新启动SpringBoot应用
-3. 访问：http://localhost:8081
+将 `dist` 目录下的所有文件复制到 `blogserver/src/main/resources/static/` 目录下：
+```bash
+cp -r vueblog/dist/* blogserver/src/main/resources/static/
+```
+
+然后重启Spring Boot服务，即可通过 http://localhost:8081 访问完整应用。
 
 ## 常见问题解决
 
 ### 1. 数据库连接失败
-- 检查MySQL服务是否启动
-- 确认数据库名称、用户名、密码配置正确
-- 检查防火墙设置
+**问题**: `Could not create connection to database server`
 
-### 2. 前端安装依赖失败
-- 清除npm缓存：`npm cache clean --force`
-- 使用淘宝镜像：`npm install --registry=https://registry.npm.taobao.org`
+**解决方案**:
+- 检查MySQL服务是否启动
+- 验证数据库URL、用户名、密码是否正确
+- 确认数据库名称是否正确
+
+### 2. 前端依赖安装失败
+**问题**: `npm install` 出现网络错误
+
+**解决方案**:
+```bash
+# 使用淘宝镜像
+npm config set registry https://registry.npmmirror.com
+
+# 清除缓存重新安装
+npm cache clean --force
+npm install
+```
 
 ### 3. 端口冲突
-- 后端默认端口：8081（可在application.properties中修改）
-- 前端默认端口：8080（可在vueblog/config/index.js中修改）
+**问题**: 端口8080或8081被占用
 
-### 4. 跨域问题
-- 前端已配置代理转发到后端，一般不会出现跨域问题
-- 如果仍有问题，检查 `vueblog/config/index.js` 中的proxyTable配置
+**解决方案**:
+- 修改后端端口：编辑 `blogserver/src/main/resources/application.properties` 中的 `server.port`
+- 修改前端端口：编辑 `vueblog/config/index.js` 中的 `port` 配置
 
-## 默认账号信息
+### 4. Maven构建失败
+**问题**: Maven依赖下载失败
 
-根据数据库初始化脚本，默认管理员账号：
-- 用户名：admin
-- 密码：123
+**解决方案**:
+- 使用项目自带的Maven Wrapper：`./mvnw` 或 `mvnw.cmd`
+- 配置Maven镜像为国内源
 
-## 技术栈
+### 5. 前端页面空白
+**问题**: 访问前端页面出现空白
 
-### 后端技术
-- SpringBoot 2.2.7
-- Spring Security
-- MyBatis
-- MySQL
-- Druid连接池
+**解决方案**:
+- 检查浏览器控制台是否有JavaScript错误
+- 确认后端服务是否正常启动
+- 检查API接口URL配置是否正确
 
-### 前端技术
-- Vue 2.5.2
-- Element UI 2.0.8
-- Axios
-- Vue Router
-- Vue ECharts
-- Mavon Editor
+## 开发指南
 
-## 开发建议
+### 后端开发
+- 主要代码目录：`blogserver/src/main/java/org/sang/`
+- 配置文件：`blogserver/src/main/resources/`
+- 使用MyBatis进行数据库操作
+- Spring Security处理用户认证
 
-1. **后端开发**：使用IntelliJ IDEA，可以直接运行和调试
-2. **前端开发**：使用WebStorm或VSCode，配合Vue DevTools进行调试
-3. **数据库管理**：使用MySQL Workbench或Navicat管理数据库
-4. **版本控制**：使用Git进行代码版本管理
+### 前端开发
+- 主要代码目录：`vueblog/src/`
+- 使用Vue 2.x + ElementUI
+- API调用通过axios
+- 路由配置在 `vueblog/src/router/index.js`
 
-## 项目结构说明
+### 调试技巧
+1. **后端日志**: 在 `application.properties` 中设置 `logging.level.root=debug`
+2. **前端调试**: 使用浏览器开发者工具 
+3. **API调试**: 使用Postman或类似工具测试接口
 
-### 后端项目结构（blogserver）
-```
-src/
-├── main/
-│   ├── java/
-│   │   └── org/sang/          # Java源码
-│   └── resources/
-│       ├── application.properties    # 配置文件
-│       ├── vueblog.sql             # 数据库脚本
-│       ├── static/                 # 静态资源
-│       └── templates/              # 模板文件
-└── test/                    # 测试代码
-```
+## 系统功能模块
 
-### 前端项目结构（vueblog）
-```
-src/
-├── assets/                  # 静态资源
-├── components/              # Vue组件
-├── router/                  # 路由配置
-├── App.vue                  # 根组件
-└── main.js                  # 入口文件
+- 用户管理
+- 文章管理
+- 栏目管理  
+- 评论管理
+- 数据统计
+- 权限控制
 
-config/
-├── index.js                 # 项目配置
-└── ...
+## 技术架构补充说明
 
-build/                      # 构建配置
-```
+- **前后端分离**: Vue前端 + Spring Boot后端
+- **数据持久化**: MyBatis + MySQL
+- **安全认证**: Spring Security + JWT
+- **UI框架**: ElementUI
+- **图表展示**: vue-echarts  
+- **编辑器**: mavon-editor（Markdown编辑器）
+
+## 获取帮助
+
+如遇到其他问题，可以：
+1. 查看项目GitHub Issues
+2. 关注公众号"江南一点雨"
+3. 微信群咨询（微信号：a_java_boy2，备注V部落）
 
 ---
 
-**注意：** 本文档基于项目当前版本编写，如果项目有更新，请以实际情况为准。
+**祝您使用愉快！** 🎉
